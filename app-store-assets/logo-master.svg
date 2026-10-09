@@ -1,0 +1,33 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="bg-clip">
+      <rect x="0" y="0" width="512" height="512" rx="96" ry="96"/>
+    </clipPath>
+    <clipPath id="tennis-clip">
+      <circle cx="196" cy="256" r="104"/>
+    </clipPath>
+    <clipPath id="basket-clip">
+      <circle cx="326" cy="256" r="104"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#bg-clip)">
+    <rect x="0" y="0" width="512" height="512" fill="#132038"/>
+
+    <!-- basketball (right, drawn first so tennis ball overlaps it) -->
+    <g clip-path="url(#basket-clip)">
+      <circle cx="326" cy="256" r="104" fill="#e07a3f"/>
+      <line x1="326" y1="152" x2="326" y2="360" stroke="#132038" stroke-width="7"/>
+      <line x1="222" y1="256" x2="430" y2="256" stroke="#132038" stroke-width="7"/>
+      <path d="M 232 175 Q 326 256 232 337" fill="none" stroke="#132038" stroke-width="7"/>
+      <path d="M 420 175 Q 326 256 420 337" fill="none" stroke="#132038" stroke-width="7"/>
+    </g>
+
+    <!-- tennis ball (left, on top for overlap) -->
+    <g clip-path="url(#tennis-clip)">
+      <circle cx="196" cy="256" r="104" fill="#3f8f5f"/>
+      <path d="M 100 175 Q 196 220 292 175" fill="none" stroke="#f4f5f3" stroke-width="8"/>
+      <path d="M 100 337 Q 196 292 292 337" fill="none" stroke="#f4f5f3" stroke-width="8"/>
+    </g>
+  </g>
+</svg>

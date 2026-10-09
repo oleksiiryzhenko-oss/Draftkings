@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draftkings</title>
+<meta name="description" content="Browse tennis and basketball sessions and register instantly — no account needed.">
+<meta name="theme-color" content="#132038">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#132038;
+    --navy-2:#1c2e4f;
+    --white:#ffffff;
+    --paper:#f4f5f3;
+    --ink:#1b2230;
+    --ink-soft:#5b6472;
+    --line:#dde1e2;
+    --tennis:#3f8f5f;
+    --tennis-soft:#e4f2e9;
+    --basket:#e07a3f;
+    --basket-soft:#fbe9dc;
+    --danger:#c14848;
+
+    --bg: var(--paper);
+    --surface: var(--white);
+    --text: var(--ink);
+    --text-soft: var(--ink-soft);
+    --border: var(--line);
+    --nav-bg: var(--navy);
+    --nav-text: rgba(255,255,255,.72);
+    --nav-text-active: #ffffff;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f1522;
+      --surface:#161e2e;
+      --text:#eef1f5;
+      --text-soft:#a3aec1;
+      --border:#2a3549;
+      --tennis-soft:#183226;
+      --basket-soft:#33241a;
+      --nav-bg:#0a0f19;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1522;
+    --surface:#161e2e;
+    --text:#eef1f5;
+    --text-soft:#a3aec1;
+    --border:#2a3549;
+    --tennis-soft:#183226;
+    --basket-soft:#33241a;
+    --nav-bg:#0a0f19;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding-bottom:76px;
+  }
+  h1,h2,h3,h4{
+    font-family:'Barlow Condensed',system-ui,sans-serif;
+    font-weight:700;
+    letter-spacing:.01em;
+    margin:0;
+    color:var(--text);
+  }
+  p{margin:0;}
+  button{font-family:inherit;cursor:pointer;}
+  a{color:inherit;}
+  .view-hidden{display:none !important;}
+  img{max-width:100%;display:block;}
+
+  /* ---------- layout shells ---------- */
+  .screen{
+    max-width:640px;
+    margin:0 auto;
+    padding:20px 18px 40px;
+  }
+  .app-top{
+    background:var(--navy);
+    color:#fff;
+    padding:22px 18px 60px;
+    position:relative;
+    overflow:hidden;
+  }
+  .app-top::after{
+    content:"";
+    position:absolute;
+    inset:auto -20% -60% -20%;
+    height:140px;
+    border-top:2px dashed rgba(255,255,255,.14);
+    border-radius:50%;
+  }
+  .app-top .brand{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:22px;font-weight:700;
+    position:relative;z-index:1;
+  }
+  .brand .dot-tennis{color:var(--tennis);}
+  .brand .dot-basket{color:var(--basket);}
+
+  /* ---------- bottom nav ---------- */
+  .bottom-nav{
+    position:fixed;left:0;right:0;bottom:0;
+    background:var(--nav-bg);
+    display:flex;
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+    z-index:50;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+  .nav-btn{
+    flex:1;
+    background:none;border:none;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    color:var(--nav-text);
+    font-size:11.5px;
+    padding:6px 2px;
+    border-radius:10px;
+  }
+  .nav-btn .nav-icon{font-size:19px;line-height:1;}
+  .nav-btn.active{color:var(--nav-text-active);}
+  .nav-btn.active .nav-icon{transform:translateY(-1px);}
+
+  /* ---------- home ---------- */
+  .hero-card{
+    position:relative;z-index:1;
+    margin-top:16px;
+  }
+  .hero-card h1{font-size:32px;line-height:1.05;color:#fff;}
+  .hero-sub{color:rgba(255,255,255,.72);font-size:14.5px;margin-top:10px;line-height:1.5;max-width:46ch;}
+  .cta-row{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 18px;
+    border-radius:999px;
+    border:1px solid transparent;
+    font-weight:600;
+    font-size:14.5px;
+  }
+  .btn-primary{background:#fff;color:var(--navy);}
+  .btn-primary:active{transform:scale(.98);}
+  .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.3);}
+  .btn-outline{background:transparent;color:var(--navy);border-color:var(--navy);}
+  :root[data-theme="dark"] .btn-outline, body:not([data-theme="light"]) .btn-outline{color:var(--text);border-color:var(--border);}
+
+  .stat-strip{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    margin-top:-38px;
+    position:relative;z-index:2;
+  }
+  .stat-cell{
+    background:var(--surface);
+    padding:14px 8px;
+    text-align:center;
+  }
+  .stat-cell .num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;}
+  .stat-cell .lbl{font-size:10.5px;color:var(--text-soft);margin-top:2px;line-height:1.3;}
+
+  .section-heading{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin:30px 0 12px;
+  }
+  .section-heading h2{font-size:22px;}
+  .section-heading .link{font-size:13px;color:var(--text-soft);text-decoration:underline;background:none;border:none;padding:0;}
+
+  .sport-picker{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .sport-tile{
+    border-radius:16px;
+    padding:16px 14px;
+    border:1px solid var(--border);
+    background:var(--surface);
+  }
+  .sport-tile.tennis{border-top:4px solid var(--tennis);}
+  .sport-tile.basket{border-top:4px solid var(--basket);}
+  .sport-tile .icon{font-size:26px;}
+  .sport-tile h3{font-size:19px;margin-top:6px;}
+  .sport-tile p{font-size:12.5px;color:var(--text-soft);margin-top:4px;line-height:1.4;}
+
+  /* ---------- activity ticket card ---------- */
+  .ticket{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 14px 14px 16px;
+    display:flex;
+    gap:12px;
+    margin-bottom:12px;
+    position:relative;
+    border-left:4px solid var(--tennis);
+  }
+  .ticket.basket{border-left-color:var(--basket);}
+  .ticket .stripe{width:3px;}
+  .ticket-body{flex:1;min-width:0;}
+  .ticket-top{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+  .chip{
+    font-size:10.5px;font-weight:600;
+    padding:3px 8px;border-radius:999px;
+    text-transform:uppercase;letter-spacing:.03em;
+  }
+  .chip.tennis{background:var(--tennis-soft);color:var(--tennis);}
+  .chip.basket{background:var(--basket-soft);color:var(--basket);}
+  .chip.status-full{background:#f2dede;color:var(--danger);}
+  .chip.status-open{background:var(--tennis-soft);color:var(--tennis);}
+  .ticket h3{font-size:18px;margin-top:2px;}
+  .ticket .meta{font-size:12.5px;color:var(--text-soft);margin-top:5px;line-height:1.65;}
+  .ticket .meta b{color:var(--text);font-weight:600;}
+  .ticket-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px;}
+  .spots-left{font-size:12px;font-weight:600;}
+  .spots-left.low{color:var(--basket);}
+  .spots-left.none{color:var(--danger);}
+  .view-btn{
+    font-size:12.5px;font-weight:600;
+    padding:8px 14px;border-radius:999px;
+    background:var(--navy);color:#fff;border:none;
+  }
+  :root[data-theme="dark"] .view-btn, body:not([data-theme="light"]) .view-btn{background:#3a4a6b;}
+
+  /* ---------- filter / tabs ---------- */
+  .tab-row{display:flex;gap:8px;margin:14px 0 6px;}
+  .tab-btn{
+    flex:1;padding:9px 8px;border-radius:10px;
+    border:1px solid var(--border);background:var(--surface);
+    font-size:13px;font-weight:600;color:var(--text-soft);
+  }
+  .tab-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+  .filter-toggle{
+    display:flex;align-items:center;gap:6px;
+    font-size:13px;font-weight:600;color:var(--text-soft);
+    background:none;border:none;padding:10px 0;
+  }
+  .filter-panel{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    padding:12px;background:var(--surface);border:1px solid var(--border);
+    border-radius:12px;margin-bottom:12px;
+  }
+  .filter-panel label{font-size:11px;color:var(--text-soft);display:block;margin-bottom:4px;}
+  .filter-panel select{
+    width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);
+    background:var(--bg);color:var(--text);font-size:13px;
+  }
+  .empty-note{
+    text-align:center;color:var(--text-soft);font-size:13.5px;
+    padding:30px 10px;
+  }
+
+  /* ---------- club / list rows ---------- */
+  .info-block{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:16px;margin-bottom:12px;
+  }
+  .info-block h3{font-size:17px;margin-bottom:6px;}
+  .info-block p{font-size:13.5px;color:var(--text-soft);line-height:1.6;}
+
+  .loc-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:14px;margin-bottom:12px;
+  }
+  .loc-card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .loc-card h3{font-size:17px;}
+  .loc-card .addr{font-size:12.5px;color:var(--text-soft);margin-top:2px;}
+  .loc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .tag{font-size:11px;padding:4px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--border);color:var(--text-soft);}
+
+  /* ---------- faq ---------- */
+  .faq-item{border-bottom:1px solid var(--border);}
+  .faq-q{
+    width:100%;text-align:left;background:none;border:none;
+    padding:14px 0;display:flex;justify-content:space-between;align-items:center;
+    font-size:14.5px;font-weight:600;color:var(--text);gap:10px;
+  }
+  .faq-q .caret{color:var(--text-soft);transition:transform .2s ease;flex:none;}
+  .faq-item.open .caret{transform:rotate(45deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .faq-item.open .faq-a{max-height:240px;}
+  .faq-a p{font-size:13.5px;color:var(--text-soft);padding-bottom:14px;line-height:1.6;}
+
+  /* ---------- my activities ---------- */
+  .myact-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:14px;margin-bottom:12px;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .myact-card .info h3{font-size:16px;}
+  .myact-card .info p{font-size:12.5px;color:var(--text-soft);margin-top:4px;}
+  .status-tag{font-size:11px;font-weight:600;color:var(--tennis);background:var(--tennis-soft);padding:4px 9px;border-radius:999px;white-space:nowrap;}
+
+  /* ---------- modal ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(10,14,24,.55);
+    display:flex;align-items:flex-end;justify-content:center;
+    z-index:100;
+  }
+  .modal-sheet{
+    background:var(--bg);
+    width:100%;max-width:640px;
+    max-height:92vh;overflow-y:auto;
+    border-radius:20px 20px 0 0;
+    padding:18px 18px 26px;
+    animation:sheet-up .22s ease;
+  }
+  @keyframes sheet-up{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .modal-close{
+    border:none;background:var(--surface);border:1px solid var(--border);
+    width:32px;height:32px;border-radius:50%;font-size:16px;color:var(--text-soft);
+  }
+  .detail-title{font-size:26px;line-height:1.1;margin-top:2px;}
+  .detail-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    margin:16px 0;
+  }
+  .detail-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+  .detail-item .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-soft);}
+  .detail-item .v{font-size:14px;font-weight:600;margin-top:2px;}
+  .desc-block{font-size:13.5px;color:var(--text-soft);line-height:1.65;margin:14px 0;}
+  .bring-list{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:8px;}
+  .bring-list li{font-size:12.5px;background:var(--surface);border:1px solid var(--border);padding:6px 10px;border-radius:999px;}
+  .sticky-cta{position:sticky;bottom:-26px;background:var(--bg);padding-top:14px;margin-top:6px;}
+  .full-msg{
+    text-align:center;padding:12px;border-radius:10px;background:var(--basket-soft);color:var(--basket);
+    font-weight:600;font-size:13.5px;margin-bottom:8px;
+  }
+
+  /* ---------- form ---------- */
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--text);}
+  .field .req{color:var(--danger);}
+  .field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=number], .field select, .field textarea{
+    width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--border);
+    background:var(--surface);color:var(--text);font-size:14px;font-family:inherit;
+  }
+  .field textarea{resize:vertical;min-height:70px;}
+  .field .err{color:var(--danger);font-size:11.5px;margin-top:5px;display:none;}
+  .field.invalid input, .field.invalid select{border-color:var(--danger);}
+  .field.invalid .err{display:block;}
+  .radio-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .radio-pill{
+    flex:1;min-width:90px;text-align:center;
+    padding:9px 6px;border-radius:10px;border:1px solid var(--border);
+    font-size:12.5px;font-weight:600;color:var(--text-soft);background:var(--surface);
+  }
+  .radio-pill input{display:none;}
+  .radio-pill.checked{border-color:var(--navy);color:#fff;background:var(--navy);}
+  .check-row{display:flex;gap:10px;align-items:flex-start;margin:18px 0;}
+  .check-row input{margin-top:3px;}
+  .check-row label{font-size:12.5px;color:var(--text-soft);line-height:1.5;}
+
+  /* ---------- confirmation ---------- */
+  .confirm-badge{
+    width:60px;height:60px;border-radius:50%;background:var(--tennis-soft);color:var(--tennis);
+    display:flex;align-items:center;justify-content:center;font-size:28px;margin:6px auto 14px;
+  }
+  .confirm-title{text-align:center;font-size:24px;}
+  .confirm-sub{text-align:center;color:var(--text-soft);font-size:13.5px;margin-top:6px;}
+  .ref-code{
+    text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;
+    letter-spacing:.04em;background:var(--surface);border:1px dashed var(--border);
+    border-radius:12px;padding:12px;margin:16px 0;color:var(--navy);
+  }
+  :root[data-theme="dark"] .ref-code, body:not([data-theme="light"]) .ref-code{color:var(--text);}
+  .confirm-list{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px 14px;margin:14px 0;}
+  .confirm-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px;}
+  .confirm-row:last-child{border-bottom:none;}
+  .confirm-row .k{color:var(--text-soft);}
+  .confirm-row .v{font-weight:600;text-align:right;}
+
+  .toast{
+    position:fixed;bottom:88px;left:50%;transform:translateX(-50%);
+    background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;
+    font-size:13px;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .toast.show{opacity:1;}
+
+  @media (min-width:520px){
+    .detail-grid{grid-template-columns:1fr 1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+<div id="modal-root"></div>
+
+<!-- ================= HOME ================= -->
+<section data-view="home" class="view">
+  <div class="app-top">
+    <div class="brand"><span class="dot-tennis">●</span> Draftkings</div>
+    <div class="hero-card">
+      <h1>Play tennis and&nbsp;basketball this week — no account needed.</h1>
+      <p class="hero-sub">Draftkings is a local offline sports club. Browse real sessions and matches, check who's still got room, and register in under a minute.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" onclick="goView('activities')">Explore Activities</button>
+        <button class="btn btn-ghost" onclick="goView('club')">About the Club</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" style="padding-top:0;">
+    <div class="stat-strip">
+      <div class="stat-cell"><div class="num">150+</div><div class="lbl">Club Players</div></div>
+      <div class="stat-cell"><div class="num">12</div><div class="lbl">Activities / month</div></div>
+      <div class="stat-cell"><div class="num">6</div><div class="lbl">Locations</div></div>
+      <div class="stat-cell"><div class="num">2</div><div class="lbl">Tennis &amp; Basketball</div></div>
+    </div>
+
+    <div class="section-heading"><h2>Upcoming Matches</h2><button class="link" onclick="goView('activities')">See all</button></div>
+    <div id="home-upcoming"></div>
+
+    <div class="section-heading"><h2>Choose Your Sport</h2></div>
+    <div class="sport-picker">
+      <button class="sport-tile tennis" style="text-align:left" onclick="openActivitiesFiltered('tennis')">
+        <div class="icon">🎾</div>
+        <h3>Tennis</h3>
+        <p>Matches, practice sessions and friendly games.</p>
+      </button>
+      <button class="sport-tile basket" style="text-align:left" onclick="openActivitiesFiltered('basketball')">
+        <div class="icon">🏀</div>
+        <h3>Basketball</h3>
+        <p>Open court sessions, matches and team play.</p>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ACTIVITIES ================= -->
+<section data-view="activities" class="view view-hidden">
+  <div class="screen">
+    <h2 style="font-size:26px;">Activities</h2>
+    <div class="tab-row" id="sport-tabs">
+      <button class="tab-btn active" data-sport="all">All</button>
+      <button class="tab-btn" data-sport="tennis">Tennis</button>
+      <button class="tab-btn" data-sport="basketball">Basketball</button>
+    </div>
+    <button class="filter-toggle" onclick="toggleFilterPanel()">⚙︎ Filters <span id="filter-count"></span></button>
+    <div class="filter-panel view-hidden" id="filter-panel">
+      <div>
+        <label for="f-date">Date</label>
+        <select id="f-date" onchange="applyFilters()"><option value="all">Any date</option></select>
+      </div>
+      <div>
+        <label for="f-skill">Skill level</label>
+        <select id="f-skill" onchange="applyFilters()">
+          <option value="all">Any level</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+          <option value="All Levels">All Levels</option>
+        </select>
+      </div>
+      <div style="grid-column:1/-1;">
+        <label for="f-avail">Availability</label>
+        <select id="f-avail" onchange="applyFilters()">
+          <option value="all">All activities</option>
+          <option value="open">Spots available only</option>
+        </select>
+      </div>
+    </div>
+    <div id="activities-list" style="margin-top:8px;"></div>
+  </div>
+</section>
+
+<!-- ================= MY ACTIVITIES ================= -->
+<section data-view="myactivities" class="view view-hidden">
+  <div class="screen">
+    <h2 style="font-size:26px;">My Activities</h2>
+    <p style="font-size:13px;color:var(--text-soft);margin-top:6px;">Registrations made from this device — no account required.</p>
+    <div id="my-activities-list" style="margin-top:16px;"></div>
+  </div>
+</section>
+
+<!-- ================= CLUB ================= -->
+<section data-view="club" class="view view-hidden">
+  <div class="screen">
+    <h2 style="font-size:26px;">Club</h2>
+
+    <div class="info-block">
+      <h3>About Riverline</h3>
+      <p>Draftkings is a local, offline sports community organizing real, in-person tennis and basketball activities. We're not an online league or a booking marketplace — every session happens on a real court, with real people, at a real time.</p>
+    </div>
+    <div class="info-block">
+      <h3>How It Works</h3>
+      <p>Browse upcoming tennis and basketball activities, open the one you want, and register with a few basic details. No account, password, or profile is ever required. Just show up with what's listed under "What to Bring."</p>
+    </div>
+    <div class="info-block">
+      <h3>Tennis Activities</h3>
+      <p>Singles and doubles sessions across every skill level, from casual rallies to advanced clinics, held on hard and clay courts around the city.</p>
+    </div>
+    <div class="info-block">
+      <h3>Basketball Activities</h3>
+      <p>5v5 matches, 3v3 tournaments, and open-gym sessions for all levels, held indoors at our partner sports halls.</p>
+    </div>
+
+    <div class="section-heading" style="margin-top:24px;"><h2 style="font-size:20px;">Sports Locations</h2></div>
+    <div id="club-locations"></div>
+
+    <div class="info-block" style="margin-top:6px;">
+      <h3>Participation Rules</h3>
+      <p>Arrive 10 minutes before start time. Respect the skill level listed for each activity. Cancel as early as possible if you can't make it, so someone else can take the spot. Be respectful of courts, equipment, and fellow players.</p>
+    </div>
+
+    <div class="section-heading"><h2 style="font-size:20px;">FAQ</h2></div>
+    <div id="faq-list"></div>
+
+    <div class="info-block" style="margin-top:6px;">
+      <h3>Contact</h3>
+      <p>Draftkings<br>hello@riverlinesports.club<br>+1 (555) 019-2044<br>Open daily, 8:00–21:00</p>
+    </div>
+  </div>
+</section>
+
+<div class="bottom-nav">
+  <button class="nav-btn active" data-view="home"><span class="nav-icon">🏠</span>Home</button>
+  <button class="nav-btn" data-view="activities"><span class="nav-icon">📅</span>Activities</button>
+  <button class="nav-btn" data-view="myactivities"><span class="nav-icon">📋</span>My Activities</button>
+  <button class="nav-btn" data-view="club"><span class="nav-icon">🏟️</span>Club</button>
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const ACTIVITIES = [
+  { id:'t1', sport:'tennis', name:'Saturday Morning Tennis Session', date:'2026-09-26', dateLabel:'Sat, September 26', start:'10:00', end:'11:30', location:'Central Tennis Courts', address:'14 Central Park Ave', indoor:false, skill:'Intermediate', format:'Singles & Doubles', courtType:'Hard Court', duration:'1.5 hours', maxCapacity:8, baseRegistered:6, fee:'Free', description:'A relaxed Saturday session mixing singles and doubles play. Great for players who already know the basics and want steady match practice.', equipment:'Bring your own racket; balls provided.' },
+  { id:'t2', sport:'tennis', name:'Sunday Doubles Clinic', date:'2026-09-27', dateLabel:'Sun, September 27', start:'09:00', end:'10:30', location:'Riverside Tennis Club', address:'88 Riverside Drive', indoor:false, skill:'Beginner', format:'Doubles', courtType:'Clay Court', duration:'1.5 hours', maxCapacity:8, baseRegistered:3, fee:'$5', description:'A guided doubles clinic for newer players, focused on positioning and communication with a partner. A coach is present for the first 30 minutes.', equipment:'Rackets available to borrow on request.' },
+  { id:'t3', sport:'tennis', name:'Friday Evening Rally', date:'2026-09-25', dateLabel:'Fri, September 25', start:'18:00', end:'19:30', location:'Central Tennis Courts', address:'14 Central Park Ave', indoor:false, skill:'Advanced', format:'Singles', courtType:'Hard Court', duration:'1.5 hours', maxCapacity:4, baseRegistered:4, fee:'Free', description:'Fast-paced singles rally for advanced players looking for a competitive hit after work. Limited to four players to keep courts moving quickly.', equipment:'Bring your own racket and balls.' },
+  { id:'t4', sport:'tennis', name:'Wednesday Open Court', date:'2026-09-30', dateLabel:'Wed, September 30', start:'17:00', end:'18:30', location:'Eastside Tennis Park', address:'201 Eastside Blvd', indoor:false, skill:'All Levels', format:'Singles & Doubles', courtType:'Hard Court', duration:'1.5 hours', maxCapacity:10, baseRegistered:5, fee:'Free', description:'Open court time for any skill level. Turn up, get matched with available players, and play whichever format suits the group.', equipment:'Bring your own racket; a few loaner rackets available.' },
+
+  { id:'b1', sport:'basketball', name:'Friday Basketball Night', date:'2026-09-25', dateLabel:'Fri, September 25', start:'19:00', end:'20:30', location:'Downtown Sports Hall', address:'22 Downtown Plaza', indoor:true, skill:'All Levels', format:'5 vs 5', courtType:'Full-size Indoor Court', duration:'1.5 hours', maxCapacity:10, baseRegistered:8, fee:'Free', description:'Our most popular weekly run. Casual 5v5 games with rotating teams, open to all skill levels — just come ready to move.', equipment:'Non-marking indoor shoes required.' },
+  { id:'b2', sport:'basketball', name:'Saturday 3v3 Tournament', date:'2026-09-26', dateLabel:'Sat, September 26', start:'14:00', end:'16:00', location:'Downtown Sports Hall', address:'22 Downtown Plaza', indoor:true, skill:'Intermediate', format:'3 vs 3', courtType:'Full-size Indoor Court', duration:'2 hours', maxCapacity:12, baseRegistered:12, fee:'$8', description:'A bracket-style 3v3 tournament. Teams are formed on the day from registered players — sign up solo or mention teammates in your message.', equipment:'Non-marking indoor shoes required.' },
+  { id:'b3', sport:'basketball', name:'Sunday Open Gym', date:'2026-09-27', dateLabel:'Sun, September 27', start:'11:00', end:'12:30', location:'Eastside Community Court', address:'77 Eastside Blvd', indoor:true, skill:'Beginner', format:'5 vs 5', courtType:'Community Court', duration:'1.5 hours', maxCapacity:10, baseRegistered:4, fee:'Free', description:'A low-pressure open gym for beginners and returning players to get comfortable with full-court play.', equipment:'Any court shoes are fine.' },
+  { id:'b4', sport:'basketball', name:'Tuesday Skills & Drills', date:'2026-09-29', dateLabel:'Tue, September 29', start:'18:00', end:'19:30', location:'Northgate Sports Hall', address:'5 Northgate Way', indoor:true, skill:'Advanced', format:'5 vs 5', courtType:'Full-size Indoor Court', duration:'1.5 hours', maxCapacity:10, baseRegistered:7, fee:'Free', description:'Structured drills followed by full-court scrimmage for advanced players wanting to sharpen specific skills.', equipment:'Non-marking indoor shoes required.' },
+];
+
+const LOCATIONS = [
+  { name:'Central Tennis Courts', sport:'Tennis', address:'14 Central Park Ave', indoor:false, courtType:'Hard Court', facilities:['Changing Rooms','Showers','Parking','Water Station'] },
+  { name:'Riverside Tennis Club', sport:'Tennis', address:'88 Riverside Drive', indoor:false, courtType:'Clay Court', facilities:['Changing Rooms','Pro Shop','Parking'] },
+  { name:'Eastside Tennis Park', sport:'Tennis', address:'201 Eastside Blvd', indoor:false, courtType:'Hard Court', facilities:['Water Station','Parking'] },
+  { name:'Downtown Sports Hall', sport:'Basketball', address:'22 Downtown Plaza', indoor:true, courtType:'Full-size Indoor Court', facilities:['Changing Rooms','Showers','Lockers','Parking'] },
+  { name:'Eastside Community Court', sport:'Basketball', address:'77 Eastside Blvd', indoor:true, courtType:'Community Court', facilities:['Changing Rooms','Water Station'] },
+  { name:'Northgate Sports Hall', sport:'Basketball', address:'5 Northgate Way', indoor:true, courtType:'Full-size Indoor Court', facilities:['Changing Rooms','Showers','Parking'] },
+];
+
+const FAQS = [
+  { q:'Do I need to create an account?', a:'No. You can browse the app and register directly for individual activities without creating an account or personal profile.' },
+  { q:'Can beginners participate?', a:'Yes. Most activities are open to beginners, and each one lists a recommended skill level so you can pick sessions that fit you.' },
+  { q:'Can I register for both tennis and basketball?', a:'Yes. You can register for as many separate activities as you like — tennis, basketball, or both — each with its own quick registration.' },
+  { q:'Can I cancel my registration?', a:'Yes. Open the activity in My Activities and select Cancel Registration. Your spot is released immediately for other players.' },
+  { q:'Do I need my own equipment?', a:'Each activity lists exactly what to bring. Some tennis sessions have loaner rackets; basketball sessions mainly require proper indoor shoes.' },
+  { q:'How do I know if an activity is full?', a:'Every activity card shows remaining spots. Once it reaches zero, the card is marked Full and registration is disabled.' },
+  { q:'Where do the activities take place?', a:'Across six partner locations in the city — see the Locations section under Club for addresses and facilities.' },
+];
+
+/* ============================================================
+   STATE + STORAGE
+   ============================================================ */
+const STORAGE_KEY = 'riverline_registrations_v1';
+
+function getRegistrations(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveRegistrations(list){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){ /* storage unavailable */ }
+}
+function regCountFor(activityId){
+  return getRegistrations().filter(r => r.activityId === activityId).length;
+}
+function currentRegistered(activity){
+  return activity.baseRegistered + regCountFor(activity.id);
+}
+function remainingSpots(activity){
+  return Math.max(0, activity.maxCapacity - currentRegistered(activity));
+}
+function findActivity(id){ return ACTIVITIES.find(a => a.id === id); }
+
+let filters = { sport:'all', date:'all', skill:'all', avail:'all' };
+let pendingActivityId = null; // used during registration flow
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function goView(view){
+  document.querySelectorAll('.view').forEach(v => v.classList.add('view-hidden'));
+  document.querySelector('[data-view="'+view+'"].view').classList.remove('view-hidden');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  window.scrollTo(0,0);
+  if(view === 'activities') renderActivitiesList();
+  if(view === 'myactivities') renderMyActivities();
+  if(view === 'club'){ renderClubLocations(); renderFaq(); }
+  if(view === 'home') renderHomeUpcoming();
+}
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> goView(btn.dataset.view));
+});
+
+function openActivitiesFiltered(sport){
+  filters.sport = sport;
+  goView('activities');
+  document.querySelectorAll('#sport-tabs .tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.sport === sport));
+}
+
+/* ============================================================
+   RENDER: HOME
+   ============================================================ */
+function renderHomeUpcoming(){
+  const upcoming = [...ACTIVITIES].sort((a,b)=> a.date.localeCompare(b.date)).slice(0,3);
+  document.getElementById('home-upcoming').innerHTML = upcoming.map(ticketCardHtml).join('');
+}
+
+/* ============================================================
+   RENDER: ACTIVITY TICKET CARD
+   ============================================================ */
+function ticketCardHtml(a){
+  const remaining = remainingSpots(a);
+  const full = remaining <= 0;
+  const icon = a.sport === 'tennis' ? '🎾' : '🏀';
+  let spotsClass = '';
+  if(full) spotsClass = 'none'; else if(remaining <= 2) spotsClass = 'low';
+  return `
+    <div class="ticket ${a.sport === 'basketball' ? 'basket' : ''}">
+      <div class="ticket-body">
+        <div class="ticket-top">
+          <span class="chip ${a.sport}">${icon} ${a.sport}</span>
+          <span class="chip ${full ? 'status-full' : 'status-open'}">${full ? 'Full' : 'Open'}</span>
+        </div>
+        <h3>${a.name}</h3>
+        <div class="meta">
+          <b>${a.dateLabel}</b> · ${a.start}–${a.end}<br>
+          ${a.location}<br>
+          Level: ${a.skill} · ${a.format}
+        </div>
+        <div class="ticket-foot">
+          <span class="spots-left ${spotsClass}">${full ? 'Activity Full' : (remaining + ' spot' + (remaining===1?'':'s') + ' remaining')}</span>
+          <button class="view-btn" onclick="openActivityDetails('${a.id}')">View Activity</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================
+   RENDER: ACTIVITIES LIST + FILTERS
+   ============================================================ */
+function populateDateFilterOptions(){
+  const sel = document.getElementById('f-date');
+  const existing = new Set(Array.from(sel.options).map(o=>o.value));
+  const dates = [...new Set(ACTIVITIES.map(a=>a.date))].sort();
+  dates.forEach(d=>{
+    if(!existing.has(d)){
+      const a = ACTIVITIES.find(x=>x.date===d);
+      const opt = document.createElement('option');
+      opt.value = d; opt.textContent = a.dateLabel;
+      sel.appendChild(opt);
+    }
+  });
+}
+populateDateFilterOptions();
+
+document.querySelectorAll('#sport-tabs .tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#sport-tabs .tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    filters.sport = btn.dataset.sport;
+    renderActivitiesList();
+  });
+});
+
+function toggleFilterPanel(){
+  document.getElementById('filter-panel').classList.toggle('view-hidden');
+}
+
+function applyFilters(){
+  filters.date = document.getElementById('f-date').value;
+  filters.skill = document.getElementById('f-skill').value;
+  filters.avail = document.getElementById('f-avail').value;
+  renderActivitiesList();
+}
+
+function renderActivitiesList(){
+  let list = ACTIVITIES.filter(a=>{
+    if(filters.sport !== 'all' && a.sport !== filters.sport) return false;
+    if(filters.date !== 'all' && a.date !== filters.date) return false;
+    if(filters.skill !== 'all' && a.skill !== filters.skill) return false;
+    if(filters.avail === 'open' && remainingSpots(a) <= 0) return false;
+    return true;
+  }).sort((a,b)=> a.date.localeCompare(b.date));
+
+  const activeCount = [filters.date!=='all', filters.skill!=='all', filters.avail!=='all'].filter(Boolean).length;
+  document.getElementById('filter-count').textContent = activeCount ? '('+activeCount+')' : '';
+
+  const container = document.getElementById('activities-list');
+  if(list.length === 0){
+    container.innerHTML = '<div class="empty-note">No activities match these filters yet. Try widening your search.</div>';
+    return;
+  }
+  container.innerHTML = list.map(ticketCardHtml).join('');
+}
+
+/* ============================================================
+   RENDER: ACTIVITY DETAILS MODAL
+   ============================================================ */
+function openActivityDetails(id){
+  const a = findActivity(id);
+  if(!a) return;
+  const remaining = remainingSpots(a);
+  const full = remaining <= 0;
+  const icon = a.sport === 'tennis' ? '🎾' : '🏀';
+  const bring = a.sport === 'tennis'
+    ? ['Tennis racket','Sports shoes','Sportswear','Water']
+    : ['Basketball shoes','Sportswear','Water','Personal equipment'];
+
+  const html = `
+  <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <span class="chip ${a.sport}">${icon} ${a.sport}</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <h2 class="detail-title">${a.name}</h2>
+      <p style="font-size:13px;color:var(--text-soft);margin-top:6px;">${a.dateLabel} · ${a.start}–${a.end}</p>
+
+      <div class="detail-grid">
+        <div class="detail-item"><div class="k">Venue</div><div class="v">${a.location}</div></div>
+        <div class="detail-item"><div class="k">Address</div><div class="v">${a.address}</div></div>
+        <div class="detail-item"><div class="k">Setting</div><div class="v">${a.indoor ? 'Indoor' : 'Outdoor'}</div></div>
+        <div class="detail-item"><div class="k">Skill Level</div><div class="v">${a.skill}</div></div>
+        <div class="detail-item"><div class="k">Format</div><div class="v">${a.format}</div></div>
+        <div class="detail-item"><div class="k">Court Type</div><div class="v">${a.courtType}</div></div>
+        <div class="detail-item"><div class="k">Duration</div><div class="v">${a.duration}</div></div>
+        <div class="detail-item"><div class="k">Registered</div><div class="v">${currentRegistered(a)} / ${a.maxCapacity}</div></div>
+        <div class="detail-item"><div class="k">Fee</div><div class="v">${a.fee}</div></div>
+      </div>
+
+      <div class="desc-block">${a.description}<br><br><b style="color:var(--text)">Equipment:</b> ${a.equipment}</div>
+
+      <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-soft);margin-top:18px;">What to Bring</h3>
+      <ul class="bring-list">${bring.map(b=>`<li>${b}</li>`).join('')}</ul>
+
+      <div class="sticky-cta">
+        ${full ? '<div class="full-msg">Activity Full</div>' : ''}
+        <button class="btn btn-primary" style="width:100%;background:${full ? 'var(--border)' : 'var(--navy)'};color:${full?'var(--text-soft)':'#fff'};"
+          ${full ? 'disabled' : ''} onclick="openRegistration('${a.id}')">
+          ${full ? 'Activity Full' : 'Register for Activity'}
+        </button>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('modal-root').innerHTML = html;
+}
+
+function closeModal(){
+  document.getElementById('modal-root').innerHTML = '';
+}
+
+/* ============================================================
+   RENDER: REGISTRATION FORM MODAL
+   ============================================================ */
+function openRegistration(id){
+  const a = findActivity(id);
+  if(!a || remainingSpots(a) <= 0) return;
+  pendingActivityId = id;
+  const icon = a.sport === 'tennis' ? '🎾' : '🏀';
+
+  const sportField = a.sport === 'tennis'
+    ? `<div class="field">
+        <label>Preferred Format</label>
+        <div class="radio-row" id="pref-row">
+          ${['Singles','Doubles','No Preference'].map((opt,i)=>`
+            <label class="radio-pill ${i===2?'checked':''}">
+              <input type="radio" name="pref" value="${opt}" ${i===2?'checked':''} onchange="onPrefChange(this)">${opt}
+            </label>`).join('')}
+        </div>
+      </div>`
+    : `<div class="field">
+        <label>Preferred Position</label>
+        <div class="radio-row" id="pref-row">
+          ${['Guard','Forward','Center','No Preference'].map((opt,i)=>`
+            <label class="radio-pill ${i===3?'checked':''}">
+              <input type="radio" name="pref" value="${opt}" ${i===3?'checked':''} onchange="onPrefChange(this)">${opt}
+            </label>`).join('')}
+        </div>
+      </div>`;
+
+  const html = `
+  <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <span class="chip ${a.sport}">${icon} Register</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <h2 class="detail-title" style="font-size:22px;">${a.name}</h2>
+      <p style="font-size:13px;color:var(--text-soft);margin-top:4px;">${a.dateLabel} · ${a.start}–${a.end} · ${a.location}</p>
+
+      <form id="reg-form" style="margin-top:18px;" onsubmit="return submitRegistration(event)">
+        <div class="field" data-field="name">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="reg-name" autocomplete="name">
+          <div class="err">Please enter your full name.</div>
+        </div>
+        <div class="field" data-field="email">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" id="reg-email" autocomplete="email">
+          <div class="err">Please enter a valid email address.</div>
+        </div>
+        <div class="field" data-field="phone">
+          <label>Phone Number <span class="req">*</span></label>
+          <input type="tel" id="reg-phone" autocomplete="tel">
+          <div class="err">Please enter a phone number.</div>
+        </div>
+        <div class="field" data-field="age">
+          <label>Age <span class="req">*</span></label>
+          <input type="number" id="reg-age" min="5" max="99">
+          <div class="err">Please enter a valid age (5–99).</div>
+        </div>
+
+        ${sportField}
+
+        <div class="field" data-field="experience">
+          <label>Experience Level <span class="req">*</span></label>
+          <select id="reg-experience">
+            <option value="">Select level…</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+          <div class="err">Please select your experience level.</div>
+        </div>
+
+        <div class="field">
+          <label>Message to Organizer (optional)</label>
+          <textarea id="reg-message" placeholder="Anything the organizer should know…"></textarea>
+        </div>
+
+        <div class="check-row" data-field="agree">
+          <input type="checkbox" id="reg-agree">
+          <label for="reg-agree">I agree to the club participation rules.</label>
+        </div>
+        <div class="field err" id="agree-err" style="display:none;margin-top:-10px;">Please confirm you agree to the participation rules.</div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;background:var(--navy);color:#fff;">Confirm Registration</button>
+      </form>
+    </div>
+  </div>`;
+  document.getElementById('modal-root').innerHTML = html;
+}
+
+function onPrefChange(input){
+  document.querySelectorAll('#pref-row .radio-pill').forEach(p=>p.classList.remove('checked'));
+  input.closest('.radio-pill').classList.add('checked');
+}
+
+function submitRegistration(evt){
+  evt.preventDefault();
+  const a = findActivity(pendingActivityId);
+  if(!a) return false;
+
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const age = document.getElementById('reg-age').value.trim();
+  const experience = document.getElementById('reg-experience').value;
+  const message = document.getElementById('reg-message').value.trim();
+  const agree = document.getElementById('reg-agree').checked;
+  const prefInput = document.querySelector('input[name="pref"]:checked');
+  const pref = prefInput ? prefInput.value : 'No Preference';
+
+  let valid = true;
+  function setInvalid(fieldName, isInvalid){
+    const el = document.querySelector('[data-field="'+fieldName+'"]');
+    if(el) el.classList.toggle('invalid', isInvalid);
+    if(isInvalid) valid = false;
+  }
+  setInvalid('name', name.length < 2);
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  setInvalid('email', !emailOk);
+  setInvalid('phone', phone.length < 6);
+  const ageNum = parseInt(age,10);
+  setInvalid('age', !ageNum || ageNum < 5 || ageNum > 99);
+  setInvalid('experience', !experience);
+
+  const agreeErr = document.getElementById('agree-err');
+  if(!agree){ agreeErr.style.display='block'; valid = false; } else { agreeErr.style.display='none'; }
+
+  if(!valid) return false;
+  if(remainingSpots(a) <= 0){ showToast('Sorry, this activity just filled up.'); closeModal(); return false; }
+
+  const ref = 'SC-' + Math.floor(1000 + Math.random()*9000);
+  const registration = {
+    refId: ref,
+    activityId: a.id,
+    name, email, phone, age: ageNum,
+    sportPref: pref,
+    experience, message,
+    timestamp: Date.now()
+  };
+  const regs = getRegistrations();
+  regs.push(registration);
+  saveRegistrations(regs);
+
+  openConfirmation(registration, a);
+  return false;
+}
+
+/* ============================================================
+   RENDER: CONFIRMATION MODAL
+   ============================================================ */
+function openConfirmation(reg, a){
+  const prefLabel = a.sport === 'tennis' ? 'Preferred Format' : 'Preferred Position';
+  const html = `
+  <div class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="confirm-badge">✓</div>
+      <h2 class="confirm-title">Registration Confirmed!</h2>
+      <p class="confirm-sub">You're set for ${a.name}.</p>
+      <div class="ref-code">${reg.refId}</div>
+      <div class="confirm-list">
+        <div class="confirm-row"><span class="k">Activity</span><span class="v">${a.name}</span></div>
+        <div class="confirm-row"><span class="k">Sport</span><span class="v">${a.sport === 'tennis' ? 'Tennis' : 'Basketball'}</span></div>
+        <div class="confirm-row"><span class="k">Date</span><span class="v">${a.dateLabel}</span></div>
+        <div class="confirm-row"><span class="k">Time</span><span class="v">${a.start}–${a.end}</span></div>
+        <div class="confirm-row"><span class="k">Location</span><span class="v">${a.location}</span></div>
+        <div class="confirm-row"><span class="k">Participant</span><span class="v">${reg.name}</span></div>
+        <div class="confirm-row"><span class="k">Experience Level</span><span class="v">${reg.experience}</span></div>
+        <div class="confirm-row"><span class="k">${prefLabel}</span><span class="v">${reg.sportPref}</span></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button class="btn btn-outline" style="flex:1;" onclick="closeModal(); openActivityDetails('${a.id}')">View Activity</button>
+        <button class="btn btn-primary" style="flex:1;background:var(--navy);color:#fff;" onclick="closeModal(); goView('myactivities')">View My Activities</button>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('modal-root').innerHTML = html;
+  renderActivitiesList();
+  renderHomeUpcoming();
+}
+
+/* ============================================================
+   RENDER: MY ACTIVITIES
+   ============================================================ */
+function renderMyActivities(){
+  const regs = getRegistrations().sort((a,b)=> b.timestamp - a.timestamp);
+  const container = document.getElementById('my-activities-list');
+  if(regs.length === 0){
+    container.innerHTML = '<div class="empty-note">No registrations yet on this device.<br>Explore activities to join your first session.</div>';
+    return;
+  }
+  container.innerHTML = regs.map(reg=>{
+    const a = findActivity(reg.activityId);
+    if(!a) return '';
+    const icon = a.sport === 'tennis' ? '🎾' : '🏀';
+    return `
+    <div class="myact-card">
+      <div class="info">
+        <h3>${icon} ${a.name}</h3>
+        <p>${a.dateLabel} · ${a.start} · ${a.location}</p>
+        <p style="margin-top:6px;color:var(--text-soft);">Ref: ${reg.refId}</p>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+        <span class="status-tag">Registered</span>
+        <button class="view-btn" style="background:transparent;color:var(--danger);border:1px solid var(--danger);" onclick="confirmCancel('${reg.refId}')">Cancel</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function confirmCancel(refId){
+  const sure = window.confirm('Are you sure you want to cancel your registration?');
+  if(!sure) return;
+  const regs = getRegistrations();
+  const updated = regs.filter(r => r.refId !== refId);
+  saveRegistrations(updated);
+  renderMyActivities();
+  renderActivitiesList();
+  renderHomeUpcoming();
+  showToast('Registration cancelled — spot released.');
+}
+
+/* ============================================================
+   RENDER: CLUB — LOCATIONS + FAQ
+   ============================================================ */
+function renderClubLocations(){
+  document.getElementById('club-locations').innerHTML = LOCATIONS.map(loc=>`
+    <div class="loc-card">
+      <div class="top">
+        <div>
+          <h3>${loc.name}</h3>
+          <div class="addr">${loc.address}</div>
+        </div>
+        <span class="chip ${loc.sport.toLowerCase()==='tennis'?'tennis':'basket'}">${loc.sport}</span>
+      </div>
+      <div class="loc-tags">
+        <span class="tag">${loc.indoor ? 'Indoor' : 'Outdoor'}</span>
+        <span class="tag">${loc.courtType}</span>
+        ${loc.facilities.map(f=>`<span class="tag">${f}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderFaq(){
+  document.getElementById('faq-list').innerHTML = FAQS.map((f,i)=>`
+    <div class="faq-item" id="faq-${i}">
+      <button class="faq-q" onclick="toggleFaq(${i})">${f.q}<span class="caret">+</span></button>
+      <div class="faq-a"><p>${f.a}</p></div>
+    </div>`).join('');
+}
+function toggleFaq(i){
+  document.getElementById('faq-'+i).classList.toggle('open');
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderHomeUpcoming();
+renderActivitiesList();
+</script>
+</body>
+</html>

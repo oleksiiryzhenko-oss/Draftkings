@@ -1,0 +1,12 @@
+{
+  "appId": "club.riverline.sports",
+  "appName": "Draftkings",
+  "webDir": "www",
+  "backgroundColor": "#132038",
+  "ios": {
+    "contentInset": "always"
+  },
+  "android": {
+    "backgroundColor": "#132038"
+  }
+}

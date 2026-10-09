@@ -1,0 +1,18 @@
+{
+  "name": "riverline-sports-club",
+  "version": "1.0.1",
+  "private": true,
+  "dependencies": {
+    "@capacitor/core": "8.5.2",
+    "@capacitor/android": "8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.2"
+  },
+  "scripts": {
+    "android:sync": "cap sync android",
+    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "android:release": "npm run android:sync && cd android && ./gradlew assembleRelease bundleRelease",
+    "test:edge": "node --test cloudflare/worker.test.mjs"
+  }
+}
